@@ -22,6 +22,8 @@ const Chatv1 = (props) => {
 
 
     const [message, setMessage] = useState(null);
+    const[inputMessage,setInputMessage]=useState("")
+    const[isTyping,setIsTyping]=useState(false)
 
 socket.on("getData",(msg)=>{
           console.log("msgs",msg)
@@ -29,6 +31,8 @@ socket.on("getData",(msg)=>{
         })
 
     useEffect(()=>{
+
+     
       let msg = JSON.stringify({
         // key:`${props.email}+${props.localvalue}`
         Chat_Id1: `${props.username}_${props.localvalue}`,
@@ -45,47 +49,49 @@ socket.on("getData",(msg)=>{
     },[props.localvalue])
 
   
+socket.on("checkTyping",(msg)=>{
+  console.log("checkTyping",msg)
+  setIsTyping(msg)
+})
+    
 
-    // useEffect(() => {
+    const handleMessage=(e)=>{
+      // console.log(e.target.value)
      
-    //   let data = JSON.stringify({
-    //     // key:`${props.email}+${props.localvalue}`
-    //     Chat_Id1: `${props.username}_${props.localvalue}`,
-    //     Chat_Id2: `${props.localvalue}_${props.username}`,
-    //   });
-    //   console.log("data", data);
-  
-    //   let config = {
-    //     method: "post",
-    //     maxBodyLength: Infinity,
-    //     url: "http://localhost:4000/receive_msg",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     data: data,
-    //   };
-  
-    //   axios
-    //     .request(config)
-    //     .then((response) => {
-    //       setMessage(response.data);
-    //       console.log(JSON.stringify(response.data));
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //     });
-    // }, [props.localvalue]);
+      if(e.target.value.length>0){
+        socket.emit("isTyping", JSON.stringify({
+          Chat_Id1: `${props.username}_${props.localvalue}`,
+        Chat_Id2: `${props.localvalue}_${props.username}`,
+        
+          isTyping:true
+        }))
+        // setIsTyping(true)
+      }else{
+        socket.emit("isTyping", JSON.stringify({
+        
+          Chat_Id1: `${props.username}_${props.localvalue}`,
+          Chat_Id2: `${props.localvalue}_${props.username}`,
+        
+          isTyping:false
+        }))
+        // setIsTyping(false)
+      }
+      setInputMessage(e.target.value)
+    }
+
+
+
   
     const sendMessage = () => {
      
-      let message = document.getElementById("msg").value;
-      if (message.trim() == "") {
+      // let message = document.getElementById("msg").value;
+      if (inputMessage.trim() == "") {
         alert("please enter message to send");
       } else {
         let data = JSON.stringify({
           from: props.username,
           to: props.localvalue,
-          message: message,
+          message: inputMessage,
         });
 
        socket.emit("storeData",data)
@@ -120,7 +126,8 @@ socket.on("getData",(msg)=>{
         //   });
       }
   
-      document.getElementById("msg").value = "";
+     
+      setInputMessage("")
     };
   
     
@@ -194,7 +201,9 @@ socket.on("getData",(msg)=>{
                 );
               })}
             </List>
+            {isTyping?"Typing...":null}
           </Box>
+
           <footer className="message">
             <input
               type="text"
@@ -206,7 +215,8 @@ socket.on("getData",(msg)=>{
                 // borderRadius: "13px",
                 border: "1px solid white" ,
               }}
-              id="msg"
+              onChange={handleMessage}
+              // id="msg"
             />
             {/* <Button variant="contained" onClick={sendMessage}>
               Send
