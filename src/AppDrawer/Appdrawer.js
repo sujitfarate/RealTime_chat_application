@@ -14,7 +14,7 @@ import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import SearchSharpIcon from '@mui/icons-material/SearchSharp';
-import { Autocomplete, Button, TextField } from '@mui/material';
+import { Autocomplete, Avatar, Button, ListItemAvatar, TextField, createTheme, useMediaQuery,useTheme } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 import { useEffect } from 'react';
@@ -44,7 +44,24 @@ const[emp,setEmp]=useState([])
 const[name,setName]=useState("")
 const[filterEmployee,setFilterEmployee]=useState([])
 const [open, setOpen] = React.useState(false);
+const [selectedIndex, setSelectedIndex] = React.useState(null);
 // const[lastmsg,setLastmsg]=useState("")
+const theme = useTheme();
+
+const isXsScreen = useMediaQuery(theme.breakpoints.down('md'));
+
+
+const themes = createTheme({
+  components: {
+    MuiListItemButton: {
+      styleOverrides: {
+        selected: {
+          backgroundColor: 'red', // Replace with your desired selected background color
+        },
+      },
+    },
+  },
+});
 
 
 useEffect(()=>{
@@ -80,7 +97,8 @@ useEffect(()=>{
 
 
 
-const getEmpId=(id,name)=>{
+const getEmpId=(id,name,index)=>{
+  setSelectedIndex(index)
   console.log("click on id ",id);
   // localStorage.setItem("userid",name)
   // setLocalvalue(localStorage.getItem("userid"))
@@ -168,6 +186,18 @@ useEffect(()=>{
   return (
     <Box sx={{ display: 'flex',backgroundColor:"" }}>
       <CssBaseline />
+      {isXsScreen? <AppBar 
+        position="fixed"
+        sx={{ width: `calc(100% - 0px)`, ml: `0px`,backgroundColor:"#524ea8" }}
+      >
+        <Toolbar sx={{display:"flex",justifyContent:"space-between"}}>
+        {/* <AccountCircleIcon  /> */}
+          <Typography variant="h6" noWrap component="div">
+           {localvalue}
+          </Typography>
+          <Typography sx={{marginLeft:"70%"}}>{"Welcome :) "+username}</Typography>
+        </Toolbar>
+      </AppBar>:
       <AppBar 
         position="fixed"
         sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px`,backgroundColor:"#524ea8" }}
@@ -179,55 +209,69 @@ useEffect(()=>{
           </Typography>
           <Typography sx={{marginLeft:"70%"}}>{"Welcome :) "+username}</Typography>
         </Toolbar>
-      </AppBar>
-      <Drawer
-        sx={{
-          backgroundColor:"#383c8dd4",
-          width: drawerWidth,
-          flexShrink: 0,
-          '& .MuiDrawer-paper': {
-            width: drawerWidth,
-            boxSizing: 'border-box',
-           
-          },
+      </AppBar>}
+      
+    {
+isXsScreen?null:<Drawer
+sx={{
+  backgroundColor:"red",
+  width: drawerWidth,
+  flexShrink: 0,
+  '& .MuiDrawer-paper': {
+    width: drawerWidth,
+    boxSizing: 'border-box',
+   
+  },
+ 
+}}
+variant="permanent"
+anchor="left"
+>
+<Toolbar  sx={{backgroundColor:"#62839e91",}}>
+<Button onClick={handleClick} variant='contained' sx={{width:"15vw",backgroundColor:"purple"}}>Find user</Button>
+  {/* <TextField type='search' placeholder='Search' size='small' value={name} onChange={searchName} /> */}
+  {/* <Autocomplete
+disablePortal
+id="combo-box-demo"
+options={filterEmployee}
+sx={{ width: 300 }}
+renderInput={(params) => <TextField {...params} label="Movie" />}
+/> */}
+
+
+</Toolbar>
+<Divider />
+
+<List sx={{paddingTop:'0px'}}>
+  {emp?.map((text, index) => (
+    <>
+    <ListItem key={text}  
+sx={{"&:hover":{color:"black"}}}
+    disablePadding>
+      <ListItemButton selected={selectedIndex==index} sx={{ bgcolor: '#383c8dd4', }} onClick={()=>getEmpId(text._id,text.name,index)}>
+        {/* <ListItemIcon>
+          {index % 2 === 0 ? <AccountCircleIcon  /> : <AccountCircleIcon  />}
+        </ListItemIcon> */}
+
+                <ListItemAvatar>
+                  {index % 2 === 0?<Avatar alt="Remy Sharp" src="/images/profile1.jpg" />: <Avatar alt="Remy Sharp" src="/images/profile.JPG" /> }
          
-        }}
-        variant="permanent"
-        anchor="left"
-      >
-        <Toolbar  sx={{backgroundColor:"",}}>
-      <Button onClick={handleClick} variant='outlined' sx={{width:"15vw"}}>Find user</Button>
-          {/* <TextField type='search' placeholder='Search' size='small' value={name} onChange={searchName} /> */}
-          {/* <Autocomplete
-      disablePortal
-      id="combo-box-demo"
-      options={filterEmployee}
-      sx={{ width: 300 }}
-      renderInput={(params) => <TextField {...params} label="Movie" />}
-    /> */}
+        </ListItemAvatar>
+
+        <ListItemText  primary={text.name}  sx={{color:"white","&:hover":{color:"black"}}}
+        // secondary={text.name=="sujit"&&lastmsg.message} 
+        />
+      </ListItemButton>
+    </ListItem> <Divider />
+    </>
+  ))}
+</List>
+
+
+</Drawer>
+
+    }
       
-      
-        </Toolbar>
-        <Divider />
-        <List>
-          {emp?.map((text, index) => (
-            <>
-            <ListItem key={text} disablePadding>
-              <ListItemButton onClick={()=>getEmpId(text._id,text.name)}>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <AccountCircleIcon  /> : <AccountCircleIcon  />}
-                </ListItemIcon>
-                <ListItemText  primary={text.name} 
-                // secondary={text.name=="sujit"&&lastmsg.message} 
-                />
-              </ListItemButton>
-            </ListItem> <Divider />
-            </>
-          ))}
-        </List>
-        
-       
-      </Drawer>
     
     {/* <Chat email={email} localvalue={localvalue} username={username}/> */}
     <Chatv1 email={email} localvalue={localvalue} username={username}/>

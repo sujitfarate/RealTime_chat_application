@@ -10,6 +10,8 @@ import {
     Button,
     List,
     IconButton,
+    ListItemAvatar,
+    Avatar,
   } from "@mui/material";
   import React, { useEffect, useState } from "react";
   import axios from "axios";
@@ -24,6 +26,7 @@ const Chatv1 = (props) => {
     const [message, setMessage] = useState(null);
     const[inputMessage,setInputMessage]=useState("")
     const[isTyping,setIsTyping]=useState(false)
+    const [typingTimeout, setTypingTimeout] = useState(null);
 
 socket.on("getData",(msg)=>{
           console.log("msgs",msg)
@@ -41,12 +44,22 @@ socket.on("getData",(msg)=>{
 
         socket.emit("recieveMsg",msg)
       
-        // socket.on("getData",(msg)=>{
-        //   console.log("msgs",msg)
-        //   setMessage(msg)
-        // })
+        // socket.emit("isTyping", JSON.stringify({
         
+        //   Chat_Id1: `${props.username}_${props.localvalue}`,
+        //   Chat_Id2: `${props.localvalue}_${props.username}`,
+        
+        //   isTyping:false
+        // }))
+        // setIsTyping(false)
+
+        setInputMessage("")
+
     },[props.localvalue])
+
+//     useEffect(()=>{
+// console.log("inputMessage effect")
+//     },[inputMessage])
 
   
 socket.on("checkTyping",(msg)=>{
@@ -55,29 +68,86 @@ socket.on("checkTyping",(msg)=>{
 })
     
 
-    const handleMessage=(e)=>{
-      // console.log(e.target.value)
-     
-      if(e.target.value.length>0){
-        socket.emit("isTyping", JSON.stringify({
-          Chat_Id1: `${props.username}_${props.localvalue}`,
+    // const handleMessage=(e)=>{
+    //   // console.log(e.target.value)
+    //   setInputMessage(e.target.value)
+    //   if(e.target.value.length>1){
+    //     socket.emit("isTyping", JSON.stringify({
+    //       Chat_Id1: `${props.username}_${props.localvalue}`,
+    //     Chat_Id2: `${props.localvalue}_${props.username}`,
+        
+    //       isTyping:true
+    //     }))
+    //     // setIsTyping(true)
+    //   }else{
+    //     socket.emit("isTyping", JSON.stringify({
+        
+    //       Chat_Id1: `${props.username}_${props.localvalue}`,
+    //       Chat_Id2: `${props.localvalue}_${props.username}`,
+        
+    //       isTyping:false
+    //     }))
+    //     // setIsTyping(false)
+    //   }
+    
+    // }
+
+   
+  
+
+
+
+
+const handleMessage=(e)=>{
+
+setInputMessage(e.target.value)
+    // socket.emit("isTyping", JSON.stringify({
+        
+    //       Chat_Id1: `${props.username}_${props.localvalue}`,
+    //       Chat_Id2: `${props.localvalue}_${props.username}`,
+    //       isTyping:isTyping
+    //     }))
+}
+
+
+const handleKeyDown = () => {
+  socket.emit("isTyping", JSON.stringify({
+        
+    Chat_Id1: `${props.username}_${props.localvalue}`,
+    Chat_Id2: `${props.localvalue}_${props.username}`,
+    isTyping:true
+  }))
+  clearTimeout(typingTimeout);
+  setIsTyping(true);
+ 
+};
+
+const handleKeyUp = () => {
+ 
+  clearTimeout(typingTimeout);
+  setTypingTimeout(
+    setTimeout(() => {
+
+      setIsTyping(false);
+      socket.emit("isTyping", JSON.stringify({
+        
+        Chat_Id1: `${props.username}_${props.localvalue}`,
         Chat_Id2: `${props.localvalue}_${props.username}`,
-        
-          isTyping:true
-        }))
-        // setIsTyping(true)
-      }else{
-        socket.emit("isTyping", JSON.stringify({
-        
-          Chat_Id1: `${props.username}_${props.localvalue}`,
-          Chat_Id2: `${props.localvalue}_${props.username}`,
-        
-          isTyping:false
-        }))
-        // setIsTyping(false)
-      }
-      setInputMessage(e.target.value)
-    }
+        isTyping:false
+      }))
+    }, 2000) // Adjust the duration as needed (in milliseconds)
+  );
+
+};
+
+useEffect(() => {
+  return () => {
+    clearTimeout(typingTimeout);
+  };
+}, [typingTimeout]);
+
+
+
 
 
 
@@ -87,7 +157,8 @@ socket.on("checkTyping",(msg)=>{
       // let message = document.getElementById("msg").value;
       if (inputMessage.trim() == "") {
         alert("please enter message to send");
-      } else {
+      } 
+      else {
         let data = JSON.stringify({
           from: props.username,
           to: props.localvalue,
@@ -97,41 +168,22 @@ socket.on("checkTyping",(msg)=>{
        socket.emit("storeData",data)
        
   
-      //  let msg = JSON.stringify({
-      //   // key:`${props.email}+${props.localvalue}`
+      //  socket.emit("isTyping", JSON.stringify({
+        
       //   Chat_Id1: `${props.username}_${props.localvalue}`,
       //   Chat_Id2: `${props.localvalue}_${props.username}`,
-      // });
-
-      //   socket.emit("recieveMsg",msg)
-
-
-        // let config = {
-        //   method: "post",
-        //   maxBodyLength: Infinity,
-        //   url: "http://localhost:4000/Send_msg",
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //   },
-        //   data: data,
-        // };
-  
-        // axios
-        //   .request(config)
-        //   .then((response) => {
-        //     console.log("sendmessage", response.data);
-        //   })
-        //   .catch((error) => {
-        //     console.log(error);
-        //   });
-      }
+      
+      //   isTyping:false
+      // }))
+    }
   
      
       setInputMessage("")
+      console.log("clicked button")
     };
   
     
-  // console.log(message)
+  console.log("inputMessage==>",inputMessage)
     return (
       <div style={{ width: "-webkit-fill-available" }}>
         <Box>
@@ -178,7 +230,11 @@ socket.on("checkTyping",(msg)=>{
                             ? "end"
                             : "flex-start",
                       }}
-                    >
+                    > 
+                    {/* <ListItemAvatar> */}
+                    <Avatar alt="Remy Sharp" src="/images/profile.JPG" /> 
+          
+         {/* </ListItemAvatar> */}
                       <ListItemText
                         primary={
                           val.Chat_Id == `${props.username}_${props.localvalue}`
@@ -209,20 +265,26 @@ socket.on("checkTyping",(msg)=>{
               type="text"
               placeholder="Enter Message..."
               style={{
-                width: "95%",
+                minWidth: "90%",
                 // height: "5vh",
                 padding:"20px",
                 // borderRadius: "13px",
                 border: "1px solid white" ,
               }}
+              value={inputMessage}
               onChange={handleMessage}
+              onKeyDown={handleKeyDown}
+              onKeyUp={handleKeyUp}
               // id="msg"
             />
             {/* <Button variant="contained" onClick={sendMessage}>
               Send
             </Button> */}
-            <IconButton onClick={sendMessage} sx={{ backgroundColor: "#383c8dd4",margingLeft:"15px" }}>
-              <SendIcon sx={{color:"white"}}/>
+            <IconButton onClick={sendMessage} sx={{ backgroundColor: "#383c8dd4",margingLeft:"15px",'&:hover': {
+          backgroundColor: '#383c8dd4', 
+        }, }}>
+              <SendIcon sx={{color:"white",   
+              }}/>
             </IconButton>
             {/* <SendIcon/> */}
           </footer>
