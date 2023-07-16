@@ -37,21 +37,3 @@
   }
 }
 
-::-webkit-scrollbar {
-  width: 5px;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-  background: #383c8dd4; 
-}
- 
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background:  #383c8dd4; 
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #383c8dd4; 
-}

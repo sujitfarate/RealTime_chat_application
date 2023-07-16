@@ -14,7 +14,7 @@ import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import SearchSharpIcon from '@mui/icons-material/SearchSharp';
-import { Autocomplete, Avatar, Button, ListItemAvatar, TextField, createTheme, useMediaQuery,useTheme } from '@mui/material';
+import { Autocomplete, Avatar, Button, IconButton, ListItemAvatar, TextField, createTheme, useMediaQuery,useTheme } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 import { useEffect } from 'react';
@@ -26,6 +26,8 @@ import axios from "axios"
 import Chatscreen from '../SearchEmployee/SearchEmployee';
 import SearchEmployee from '../SearchEmployee/SearchEmployee';
 import Chatv1 from '../Chatscreen/Chatv1';
+import StorageRoundedIcon from '@mui/icons-material/StorageRounded';
+import LogoutTwoToneIcon from '@mui/icons-material/LogoutTwoTone';
 // import SearchEmployee from '../SearchEmployee/SearchEmployee';
 
 
@@ -192,10 +194,16 @@ useEffect(()=>{
       >
         <Toolbar sx={{display:"flex",justifyContent:"space-between"}}>
         {/* <AccountCircleIcon  /> */}
+        <Box sx={{    display: "flex",
+              alignItems: "center"}}>
+        <IconButton><StorageRoundedIcon/></IconButton>
           <Typography variant="h6" noWrap component="div">
            {localvalue}
-          </Typography>
-          <Typography sx={{marginLeft:"70%"}}>{"Welcome :) "+username}</Typography>
+          </Typography></Box>
+          <Box sx={{    display: "flex",
+              alignItems: "center"}}>
+          <Typography >{"Welcome :) "+username}</Typography>
+          <IconButton sx={{color:"white"}}><LogoutTwoToneIcon/></IconButton></Box>
         </Toolbar>
       </AppBar>:
       <AppBar 
@@ -207,12 +215,16 @@ useEffect(()=>{
           <Typography variant="h6" noWrap component="div">
            {localvalue}
           </Typography>
-          <Typography sx={{marginLeft:"70%"}}>{"Welcome :) "+username}</Typography>
+          <Box sx={{    display: "flex",
+              alignItems: "center"}}>
+          <Typography >{"Welcome :) "+username}</Typography>
+          <IconButton sx={{color:"white"}}><LogoutTwoToneIcon/></IconButton></Box>
         </Toolbar>
       </AppBar>}
       
     {
-isXsScreen?null:<Drawer
+isXsScreen?null:
+<Drawer
 sx={{
   backgroundColor:"red",
   width: drawerWidth,
@@ -246,9 +258,9 @@ renderInput={(params) => <TextField {...params} label="Movie" />}
   {emp?.map((text, index) => (
     <>
     <ListItem key={text}  
-sx={{"&:hover":{color:"black"}}}
+
     disablePadding>
-      <ListItemButton selected={selectedIndex==index} sx={{ bgcolor: '#383c8dd4', }} onClick={()=>getEmpId(text._id,text.name,index)}>
+      <ListItemButton selected={selectedIndex==index} sx={{ bgcolor: '#383c8dd4',color:"black","&:hover":{color:"black"} }} onClick={()=>getEmpId(text._id,text.name,index)}>
         {/* <ListItemIcon>
           {index % 2 === 0 ? <AccountCircleIcon  /> : <AccountCircleIcon  />}
         </ListItemIcon> */}
@@ -258,7 +270,9 @@ sx={{"&:hover":{color:"black"}}}
          
         </ListItemAvatar>
 
-        <ListItemText  primary={text.name}  sx={{color:"white","&:hover":{color:"black"}}}
+        <ListItemText  primary={text.name}  
+        sx={selectedIndex==index?{color:"black"}:{color:"white","&:hover":{color:"black"}}}
+        // sx={{color:"white","&:hover":{color:"black"}}}
         // secondary={text.name=="sujit"&&lastmsg.message} 
         />
       </ListItemButton>

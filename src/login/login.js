@@ -33,7 +33,7 @@ const login=()=>{
     axios.request(config)
     .then((response) => {
         console.log(response)
-      console.log(response.data.data.name);
+      console.log(response.data.data);
       if(response.data.status==true){
         Swal.fire({  
             // title: 'Good job!',  
@@ -57,7 +57,7 @@ const login=()=>{
 
        Swal.fire({  
                 // title: 'Good job!',  
-                text:"user login faild",
+                text:"User Login Faild",
                 // text: `${response.data.message}`,
                 icon: 'error'
               }); 
@@ -65,6 +65,12 @@ const login=()=>{
       }
     })
     .catch((error) => {
+      Swal.fire({  
+        // title: 'Good job!',  
+        text:error.message,
+        // text: `${response.data.message}`,
+        icon: 'warning'
+      }); 
       console.log(error);
     });
     

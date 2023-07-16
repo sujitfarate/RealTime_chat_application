@@ -27,6 +27,7 @@ const Chatv1 = (props) => {
     const[inputMessage,setInputMessage]=useState("")
     const[isTyping,setIsTyping]=useState(false)
     const [typingTimeout, setTypingTimeout] = useState(null);
+    const[selectChatid,setSelectChatid]=useState(null)
 
 socket.on("getData",(msg)=>{
           console.log("msgs",msg)
@@ -64,7 +65,8 @@ socket.on("getData",(msg)=>{
   
 socket.on("checkTyping",(msg)=>{
   console.log("checkTyping",msg)
-  setIsTyping(msg)
+  setSelectChatid(msg.chatId)
+  setIsTyping(msg.isTyping)
 })
     
 
@@ -181,9 +183,13 @@ useEffect(() => {
       setInputMessage("")
       console.log("clicked button")
     };
+
+    let Typingcheker=isTyping?"Typing...":null
   
-    
-  console.log("inputMessage==>",inputMessage)
+    console.log("idddd",`${props.username}_${props.localvalue}`)
+    console.log("idddd",`${props.localvalue}_${props.username}`)
+    console.log("idddd",selectChatid)
+  console.log("inputMessage==>",selectChatid==`${props.localvalue}_${props.username}`)
     return (
       <div style={{ width: "-webkit-fill-available" }}>
         <Box>
@@ -257,7 +263,8 @@ useEffect(() => {
                 );
               })}
             </List>
-            {isTyping?"Typing...":null}
+            {(selectChatid==`${props.localvalue}_${props.username}`)||(selectChatid==`${props.username}_${props.localvalue}`)?Typingcheker:null}
+            {/* {isTyping?"Typing...":null} */}
           </Box>
 
           <footer className="message">
