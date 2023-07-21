@@ -70,29 +70,7 @@ socket.on("checkTyping",(msg)=>{
 })
     
 
-    // const handleMessage=(e)=>{
-    //   // console.log(e.target.value)
-    //   setInputMessage(e.target.value)
-    //   if(e.target.value.length>1){
-    //     socket.emit("isTyping", JSON.stringify({
-    //       Chat_Id1: `${props.username}_${props.localvalue}`,
-    //     Chat_Id2: `${props.localvalue}_${props.username}`,
-        
-    //       isTyping:true
-    //     }))
-    //     // setIsTyping(true)
-    //   }else{
-    //     socket.emit("isTyping", JSON.stringify({
-        
-    //       Chat_Id1: `${props.username}_${props.localvalue}`,
-    //       Chat_Id2: `${props.localvalue}_${props.username}`,
-        
-    //       isTyping:false
-    //     }))
-    //     // setIsTyping(false)
-    //   }
-    
-    // }
+   
 
    
   
@@ -184,12 +162,9 @@ useEffect(() => {
       console.log("clicked button")
     };
 
-    let Typingcheker=isTyping?"Typing...":null
+    
   
-    console.log("idddd",`${props.username}_${props.localvalue}`)
-    console.log("idddd",`${props.localvalue}_${props.username}`)
-    console.log("idddd",selectChatid)
-  console.log("inputMessage==>",selectChatid==`${props.localvalue}_${props.username}`)
+   
     return (
       <div style={{ width: "-webkit-fill-available" }}>
         <Box>
@@ -263,11 +238,13 @@ useEffect(() => {
                 );
               })}
             </List>
-            {(selectChatid==`${props.localvalue}_${props.username}`)||(selectChatid==`${props.username}_${props.localvalue}`)?Typingcheker:null}
-            {/* {isTyping?"Typing...":null} */}
+            
+            
+            <div style={{position:"fixed",bottom:"9vh"}}>{isTyping?"Typing...":null}</div>
           </Box>
 
           <footer className="message">
+          
             <input
               type="text"
               placeholder="Enter Message..."
