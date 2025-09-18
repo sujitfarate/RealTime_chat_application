@@ -1,0 +1,24 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main   # run workflow when code is pushed to main branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker image
+        run: docker build -t myapp:latest .
+
+      # Deployment step (optional, only if you want to deploy to server)
+      # - name: Deploy to server
+      #   run: echo "Here you can add SSH script to run docker-compose up -d"
